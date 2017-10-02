@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body style="padding: 0px;margin: 0px;">
+<canvas id="myCanvas" onclick="chessClick(event)"></canvas>
+</body>
+<script type="text/javascript">
+    var winWidth;
+    var winHeight;
+    // 获取窗口宽度
+    if (window.innerWidth)
+        winWidth = window.innerWidth;
+    else if ((document.body) && (document.body.clientWidth))
+        winWidth = document.body.clientWidth;
+    // 获取窗口高度
+    if (window.innerHeight)
+        winHeight = window.innerHeight;
+    else if ((document.body) && (document.body.clientHeight))
+        winHeight = document.body.clientHeight;
+    // 通过深入 Document 内部对 body 进行检测，获取窗口大小
+    if (document.documentElement && document.documentElement.clientHeight && document.documentElement.clientWidth) {
+        winHeight = document.documentElement.clientHeight;
+        winWidth = document.documentElement.clientWidth;
+    }
+
+    //获取canvans对象
+    var c = document.getElementById("myCanvas");
+    var cxt = c.getContext("2d");
+    //获取x轴的宽度
+    var solid = Math.ceil(winWidth / 15)
+    //获取y轴的高度
+    var solid2 = Math.ceil(winHeight / 15)
+    //为了防止防止变形
+    if (solid >= solid2) {
+        solid = solid2;
+        solid3 = solid2;
+    } else {
+        solid2 = solid;
+    }
+
+    //为了防止变形
+    if (winWidth >= winHeight) {
+        c.width = solid * 15;
+        c.height = solid * 15;
+        winWidth = winHeight;
+    } else {
+        c.width = solid * 15;
+        c.height = solid * 15;
+        winHeight = winWidth;
+    }
+
+    //创建表盘
+    for (var x = 0; x <= 15; x++) {
+        cxt.moveTo(0, x * solid);
+        cxt.lineTo(winWidth, x * solid);
+        cxt.stroke();
+        cxt.moveTo(x * solid2, 0);
+        cxt.lineTo(x * solid2, winHeight);
+        cxt.stroke();
+    }
+
+    //用于判断点击颜色
+    var i = 0;
+
+    //创建二维数组
+    var array = new Array();
+    for (var k = 0; k < 15; k++) {    //一维长度为i,i为变量，可以根据实际情况改变
+        array[k] = new Array();  //声明二维，每一个一维数组里面的一个元素都是一个数组；
+        for (var j = 0; j < 15; j++) {   //一维数组里面每个元素数组可以包含的数量p，p也是一个变量；
+            array[k][j] = -1;    //这里将变量初始化，我这边统一初始化为空，后面在用所需的值覆盖里面的值
+        }
+    }
+
+    /**
+     * canvas点击事件
+     * @param e
+     */
+    function chessClick(e) {
+        x = e.clientX;
+        y = e.clientY;
+        x = Math.ceil(x / solid) * solid;
+        y = Math.ceil(y / solid) * solid;
+        //判断是否重复点击
+        if (array[Math.ceil(x / solid) - 1][Math.ceil(y / solid) - 1] != -1) {
+            return;
+        }
+        if (i == 0) {
+            cxt.fillStyle = "#FF0000";
+            array[Math.ceil(x / solid) - 1][Math.ceil(y / solid) - 1] = 0
+            i = 1;
+        } else {
+            cxt.fillStyle = "#000000";
+            array[Math.ceil(x / solid) - 1][Math.ceil(y / solid) - 1] = 1
+            i = 0;
+        }
+        cxt.beginPath();
+        cxt.arc(x - solid / 2, y - solid / 2, solid / 2, 0, Math.PI * 2, true);
+        cxt.closePath();
+        cxt.fill();
+    }
+
+
+</script>
+</html>
